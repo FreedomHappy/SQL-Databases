@@ -90,12 +90,12 @@ ORDER BY prod_name;
 
 SELECT prod_name
 FROM products
-WHERE prod_name LIKE '1000' # REGEXP在列值内进行匹配，LIKE匹配整个列  ？LIKE 与 REGEXP的区别
+WHERE prod_name LIKE '1000' -- REGEXP在列值内进行匹配，LIKE匹配整个列  ？LIKE 与 REGEXP的区别
 ORDER BY prod_name;
 
 SELECT prod_name
 FROM products
-WHERE prod_name REGEXP BINARY 'JetPack .000' # BINARY 区分大小写，.表匹配任意一个字符
+WHERE prod_name REGEXP BINARY 'JetPack .000' -- BINARY 区分大小写，.表匹配任意一个字符
 ORDER BY prod_name;
 
 SELECT prod_name
