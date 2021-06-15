@@ -1,4 +1,10 @@
-f/*
+/**
+《MySQL必知必会》version=2
+  笔记内容 = 书中内容  + 自己补充内容
+ */
+
+
+/*
 SELECT
 */
 
@@ -207,6 +213,14 @@ WHERE DATE(order_date) = '2005-09-01'; # Date()提取日期，Time()提取时间
 SELECT cust_id, order_num
 FROM orders
 WHERE YEAR(order_date) = 2005 AND MONTH(order_date) = 9;
+
+-- 常用时间点参考，ref:https://blog.csdn.net/WuXianYuYongHeng/article/details/77062629?utm_medium=distribute.pc_relevant.none-task-blog-baidujs_title-1&spm=1001.2101.3001.4242
+-- 前一天开始时间
+select DATE_ADD(str_to_date(DATE_FORMAT(NOW(), '%Y-%m-%d'), '%Y-%m-%d %H:%i:%s'), INTERVAL - 1 DAY);
+-- 前一天结束时间
+select DATE_ADD(DATE_ADD(str_to_date(DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 DAY), '%Y-%m-%d'), '%Y-%m-%d %H:%i:%s'), INTERVAL 1 DAY), INTERVAL - 1 SECOND)
+
+
 
 #数值处理函数
 
@@ -529,6 +543,35 @@ ADD vend_phone CHAR(20);
 
 ALTER TABLE vendors
 DROP COLUMN vend_phone;
+
+alter table vendors
+    modify vend_phone varchar(255) null;
+
+
+# 重跑脚本
+DROP PROCEDURE IF EXISTS p_alter_table;
+delimiter //
+
+CREATE PROCEDURE p_alter_table()
+begin
+    DECLARE CurrentDatabase VARCHAR(100);
+    SELECT DATABASE() INTO CurrentDatabase;
+
+    IF NOT EXISTS(SELECT *
+                  FROM information_schema.COLUMNS
+                  WHERE table_schema = CurrentDatabase
+                    AND table_name = 'vendors'
+                    and COLUMN_NAME='vend_phone') THEN
+        alter table vendors add vend_phone bigint(12) null;
+    END IF;
+
+end;
+//
+
+delimiter ;
+
+call p_alter_table();
+
 
 # 定义外键
 ALTER TABLE orderitems ADD CONSTRAINT fk_orderitems_orders FOREIGN KEY (order_num) REFERENCES orders (order_num);
@@ -877,10 +920,7 @@ CHECK TABLE orders,orderitems;
  改善性能
  */
 
-
-
 use Cartoons;
-
 
 select * from archive_orders;
 select * from orderitems;
@@ -890,53 +930,4 @@ select * from products;
 select * from orders;
 
 
-/*
- 数据库级别操作， 数据库属性操作
- */
- -- 查看表结构
-desc customers;
-describe customers;
-explain customers;
-show COLUMNS FROM customers;
-explain orders;
-
--- 查看建表sql语句
-show create table customers;
-
--- 查看表的统计信息
-show table status;
-show table status like '%customer%';
-
--- 复制备份表
-create table customers_bak like customers;
-INSERT INTO customers_bak SELECT * FROM customers;
-
-/**
-  SQL执行优化，执行计划
-  ref: https://blog.csdn.net/weixin_37968613/article/details/114652178
- */
-explain test_index;
--- 根据主键等值查询，const
-explain select * from test_index where id = 2;
-
--- 根据普通唯一索引等值查询,const
-explain select * from test_index where key2 = 10;
-
--- 根据普通索引等值匹配,ref
-explain select * from test_index where key1 = 'key112';
-
--- 根据主键索引进行范围查询,range
-explain select * from test_index where id < 100;
-
--- 根据普通唯一索引进行范围查找,range
-explain select * from test_index where key2 < 20 and key2 > 10;
-
--- 根据联合索引的最左列查询索引列的值,ref, 最左前缀，覆盖索引
-explain select key_part1,key_part2,key_part3 from test_index where key_part1 = 'key_part112';
-
--- 根据联合索引的非最左列查询索引列的值，index
-explain select key_part1,key_part2,key_part3 from test_index where key_part2 = 'key_part212';
-
--- 根据联合索引的非最左列查询索引列的值
-explain select * from test_index where key_part2 = 'key_part212';
 
