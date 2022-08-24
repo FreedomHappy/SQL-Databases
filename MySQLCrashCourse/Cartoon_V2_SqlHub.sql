@@ -547,8 +547,9 @@ DROP COLUMN vend_phone;
 alter table vendors
     modify vend_phone varchar(255) null;
 
+alter table outlook_calendar_power change accountId account_id bigint(100) NOT NULL COMMENT '账户id';
 
-# 重跑脚本
+# 重跑脚本 修改表结构
 DROP PROCEDURE IF EXISTS p_alter_table;
 delimiter //
 
@@ -920,14 +921,30 @@ CHECK TABLE orders,orderitems;
  改善性能
  */
 
-use Cartoons;
-
-select * from archive_orders;
-select * from orderitems;
-select * from customers;
-select * from vendors;
-select * from products;
-select * from orders;
 
 
+ /*
+  日期处理
+  ref: https://www.cnblogs.com/ivictor/p/5028368.html
+  */
 
+-- 自动初始化指的是如果对该字段（譬如上例中的hiredate字段）没有显性赋值，则自动设置为当前系统时间。
+-- 自动更新指的是如果修改了其它字段，则该字段的值将自动更新为当前系统时间
+CREATE TABLE `test` (
+  `id` int(11) DEFAULT NULL,
+  `hiredate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=latin1
+
+
+
+/**
+ 创建 schema
+ */
+ CREATE schema  `pmpod` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
+
+
+/**
+ 备份某张表
+ */
+create table user_user_customer_bak_7_5_ldh like user_user_customer;
+insert into user_user_customer_bak_7_5_ldh select * from user_user_customer;

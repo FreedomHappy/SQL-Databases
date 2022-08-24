@@ -75,3 +75,48 @@ explain select * from test_index where key_part2 = 'key_part212';
  */
 -- 查到当前执行中的事务
 select * from information_schema.INNODB_TRX;
+
+
+/**
+ 字符集查看
+ */
+
+-- 1. 查看MYSQL数据库服务器和数据库字符集
+show variables like '%character%';
+
+show variables like 'collation%';
+
+-- 2. 查看MYSQL所支持的字符集
+show charset where Charset = 'utf8mb4';
+
+-- 3. 查看库的字符集
+show create database cre-dev;
+
+-- 4. 查看表的字符集
+show table status from `cre-dev` like 'user_profile';
+
+-- 5. 查看表中所有列的字符集
+show full columns from user_profile;
+
+
+/**
+ mysql自增值查看
+ */
+show variables like '%auto_inc%';
+show session variables like '%auto_inc%';   --  //session会话变量
+show global variables like '%auto_inc%';   --  //全局变量
+
+/**
+mysql 表库信息查看
+ */
+-- 表的引擎
+SELECT table_name, table_type, engine FROM information_schema.tables
+WHERE table_schema = 'cre-sigma-cis'  ORDER BY table_name DESC;
+
+-- 主键不存在的表
+select t1.TABLE_SCHEMA,t1.TABLE_NAME from information_schema.`TABLES` t1
+LEFT OUTER JOIN information_schema.TABLE_CONSTRAINTS t2 on t1.TABLE_SCHEMA = t2.TABLE_SCHEMA
+and t1.TABLE_NAME = t2.TABLE_NAME and t2.CONSTRAINT_NAME in ('PRIMARY')
+where t2.TABLE_NAME is NULL
+and t1.TABLE_TYPE = 'BASE TABLE'
+and t1.TABLE_SCHEMA = 'cre-sigma-cis';
