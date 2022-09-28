@@ -1,3 +1,4 @@
+/** DML（Data Manipulation Langauge，数据操纵/管理语言） （insert，delete，update，select） */
 
 /**
   更新语句
@@ -9,3 +10,4 @@ up.user_code = uuc.user_code
 set uuc.STATUS = '00X'
 where up.STATUS = '99'
 and uuc.user_type = '03';
+

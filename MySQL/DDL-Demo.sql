@@ -1,3 +1,14 @@
+/** DDL（Data Definition Language，数据定义语言） （create，drop，alter） */
+
+/**
+ 创建表
+ */
+
+-- 复制备份表
+create table customers_bak like customers;
+INSERT INTO customers_bak SELECT * FROM customers;
+
+
 /**
 修改表结构
  */
