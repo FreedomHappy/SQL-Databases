@@ -1,4 +1,19 @@
 /**
+ 业务表查询
+ */
+-- 采用多次查询：
+Select count(1)  ’25岁及以下’  from student where age <= 25;
+Select count(1)  ’25-30岁’  from student where age >25 and age<30;
+Select count(1)  ’30岁及以上’  from student where age >= 30;
+
+-- 使用Case对三个SQL进行整合成一个语句：
+Select count(case when age <= 25 then 1 else null end)  ’25岁及以下’ ,
+count(case when age >25 and age<30 then 1 else null end)  ’25-30岁’,
+count(case when age >= 30 then 1 else null end)  ’30岁及以上’  from student;
+
+
+
+/**
     mysql 表库信息查看
  */
 -- 表的引擎
